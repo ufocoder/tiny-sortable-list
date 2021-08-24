@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import SortableList, { SortableItemProps } from './SortableList'
 
-
 interface Item {
   title: string
 }
@@ -44,6 +43,8 @@ const preset = [
   { title: 'item #3'},
   { title: 'item #4'},
   { title: 'item #5'},
+  { title: 'item #7'},
+  { title: 'item #8'},
 ]
 
 function App() {
