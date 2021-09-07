@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 
 enum Position {
   before = 0,
   after
 }
 
-type Direction = 'vertical' | 'horizontal'
+export type Direction = 'vertical' | 'horizontal'
 
 export interface SortableItemProps<T> {
   item: T
@@ -19,10 +19,11 @@ export interface SortableListProps<T> {
   items: T[]
   direction?: Direction
   className?: string
-  children: (props: SortableItemProps<T>) => React.ReactElement
+  style?: React.CSSProperties
+  children: (props: SortableItemProps<T>, index: number) => React.ReactElement
   onSort: (sourceIndex: number, targetIndex: number) => void
 }
-  
+
 const shouldInsertBefore = (sourceIndex: number | null, targetIndex: number | null, index: number) => {
   if (sourceIndex == null || targetIndex == null) {
     return false
@@ -56,12 +57,12 @@ function useDragPreventAnimation(sourceIndex: number | null) {
         return () => {
           document.removeEventListener('dragover', handler)
         }
-    
+
     }, [sourceIndex])
 }
 
 function calculateInsertPosition(e: React.DragEvent<HTMLDivElement>, direction: Direction) : Position {
-    const { top, left, width, height } = e.currentTarget.getBoundingClientRect() 
+    const { top, left, width, height } = e.currentTarget.getBoundingClientRect()
 
     if (direction === 'vertical') {
         return e.clientY < top + height / 2 ? Position.before : Position.after
@@ -90,59 +91,56 @@ function calculationTargetIndex(position: Position, sourceIndex: number, index: 
     return index + 1
 }
 
-export default function ListComponent<T>(props: SortableListProps<T>) {
+export function SortableList<T>(props: SortableListProps<T>) {
     const [sourceIndex, setSourceIndex] = useState<number | null>(null)
     const [hoveredItem, setHoveredItem] = useState<number| null>(null)
     const [targetIndex, setTargetIndex] = useState<number | null>(null)
-  
-    const { items, direction = 'vertical', className, onSort } = props
+
+    const { items, direction = 'vertical', className, style, onSort } = props
 
     useDragPreventAnimation(sourceIndex)
 
     return (
-        <div className={className}>
-          {items.map((item, index) => {
+        <div className={className} style={style}>
+          {items.map((item, index) =>
+            <div
+              draggable
+              key={index}
+              onDragStart={() => setSourceIndex(index)}
+              onDragEnter={() => setHoveredItem(index)}
+              onDragOver={(e) => {
+                e.preventDefault()
 
-            return (
-              <div
-                key={index}
-                draggable
-                onDragStart={() => setSourceIndex(index)}
-                onDragEnter={() => setHoveredItem(index)}
-                onDragOver={(e) => {
-                  e.preventDefault()
-  
-                  if (sourceIndex === null) {
-                    return
-                  }
+                if (sourceIndex === null) {
+                  return
+                }
 
-                  const position = calculateInsertPosition(e, direction)
-                  const targetIndex = calculationTargetIndex(position, sourceIndex, index)
+                const position = calculateInsertPosition(e, direction)
+                const targetIndex = calculationTargetIndex(position, sourceIndex, index)
 
-                  setTargetIndex(targetIndex)
-                }}
-                onDragEnd={(e) => {
-                  e.preventDefault()
-  
-                  if (sourceIndex !== null && targetIndex !== null) {
-                    onSort(sourceIndex, targetIndex)
-                  }
-  
-                  setTargetIndex(null)
-                  setSourceIndex(null)
-                  setHoveredItem(null)
-                }}
-              >
-                {props.children({ 
-                  item,
-                  isDragItemInsertBefore: shouldInsertBefore(sourceIndex, targetIndex, index),
-                  isDragItemInsertAfter: shouldInsertAfter(sourceIndex, targetIndex, index),
-                  isDragged: sourceIndex === index,
-                  isHovered: hoveredItem === index
-                })}
-              </div>
-            )
-          })}
+                setTargetIndex(targetIndex)
+              }}
+              onDragEnd={(e) => {
+                e.preventDefault()
+
+                if (sourceIndex !== null && targetIndex !== null) {
+                  onSort(sourceIndex, targetIndex)
+                }
+
+                setTargetIndex(null)
+                setSourceIndex(null)
+                setHoveredItem(null)
+              }}
+            >
+              {props.children({
+                item,
+                isDragItemInsertBefore: shouldInsertBefore(sourceIndex, targetIndex, index),
+                isDragItemInsertAfter: shouldInsertAfter(sourceIndex, targetIndex, index),
+                isDragged: sourceIndex === index,
+                isHovered: hoveredItem === index
+              }, index)}
+            </div>
+          )}
         </div>
     )
-  }
+}
