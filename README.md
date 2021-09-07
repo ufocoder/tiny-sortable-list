@@ -1,8 +1,9 @@
 Sortable list
 =============
 
-Example of sortable list on React based on HTML [Drag and Drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API)
+![Build](https://github.com/light-slides/canvas/actions/workflows/build.yml/badge.svg)
 
+Example of sortable list on React based on HTML [Drag and Drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API)
 
 ## Usage
 
