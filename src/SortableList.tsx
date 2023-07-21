@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import useLongPress from './hooks/useLongPress'
+import { createPortal } from 'react-dom'
 
 enum Position {
   before = 0,
@@ -95,16 +97,82 @@ export function SortableList<T>(props: SortableListProps<T>) {
     const [sourceIndex, setSourceIndex] = useState<number | null>(null)
     const [hoveredItem, setHoveredItem] = useState<number| null>(null)
     const [targetIndex, setTargetIndex] = useState<number | null>(null)
+    const [mouse, setMouse] = useState<[number, number]>([0, 0]);
 
     const { items, direction = 'vertical', className, style, onSort } = props
 
     useDragPreventAnimation(sourceIndex)
 
+    useEffect(() => {
+      const stopTextHighline = (e: any) => e.preventDefault();
+  
+      document.addEventListener("selectstart", stopTextHighline);
+
+      return () => document.removeEventListener("selectstart", stopTextHighline);
+    }, []);
+
+    useEffect(() => {
+      const handler = (e: MouseEvent) => {
+        if (sourceIndex !== null) {
+          e.preventDefault();
+          setSourceIndex(null);
+        }
+      };
+
+      document.addEventListener("mouseup", handler);
+
+      return () => document.removeEventListener("mouseup", handler);
+    }, []);
+
+    useEffect(() => {
+      const handler = (e: MouseEvent) => {
+        setMouse([e.x, e.y]);
+      };
+  
+      document.addEventListener("mousemove", handler);
+  
+      return () => document.removeEventListener("mousemove", handler);
+    }, []);
+
     return (
+      <>
+      {sourceIndex !== null && (console.log('sourceIndex', sourceIndex) || true) && (
+        <div
+          className={className}
+          style={{
+            ...style,
+            position: "absolute",
+            backgroundColor: "red",
+            left: `${mouse[0]}px`,
+            top: `${mouse[1]}px`
+          }}
+          onMouseUp={(e) => {
+            console.log('onMouseUp 000')
+            e.preventDefault()
+
+            if (sourceIndex !== null && targetIndex !== null) {
+              onSort(sourceIndex, targetIndex)
+            }
+
+            setTargetIndex(null)
+            setSourceIndex(null)
+            setHoveredItem(null)
+          }}
+        >
+          {props.children({
+                item: items[sourceIndex],
+                isDragItemInsertBefore: shouldInsertBefore(sourceIndex, targetIndex, sourceIndex),
+                isDragItemInsertAfter: shouldInsertAfter(sourceIndex, targetIndex, sourceIndex),
+                isDragged: false,
+                isHovered: false
+              }, sourceIndex)}
+        </div>
+      )}
         <div className={className} style={style}>
           {items.map((item, index) =>
             <div
-              draggable
+              draggable={false}
+              onClick={(e) => e.preventDefault() }
               key={index}
               onDragStart={() => setSourceIndex(index)}
               onDragEnter={() => setHoveredItem(index)}
@@ -131,6 +199,32 @@ export function SortableList<T>(props: SortableListProps<T>) {
                 setSourceIndex(null)
                 setHoveredItem(null)
               }}
+              // {...useLongPress(() => setSourceIndex(index), () => setSourceIndex(null))}
+              onMouseDown={(e) => { setSourceIndex(index); setHoveredItem(index)}}
+              onMouseUp={(e) => {
+                console.log('onMouseUp')
+                e.preventDefault()
+
+                if (sourceIndex !== null && targetIndex !== null) {
+                  onSort(sourceIndex, targetIndex)
+                }
+
+                setTargetIndex(null)
+                setSourceIndex(null)
+                setHoveredItem(null)
+              }}
+              onMouseMove={(e) => {
+                e.preventDefault()
+
+                if (sourceIndex === null) {
+                  return
+                }
+
+                const position = calculateInsertPosition(e, direction)
+                const targetIndex = calculationTargetIndex(position, sourceIndex, index)
+
+                setTargetIndex(targetIndex)
+              }}
             >
               {props.children({
                 item,
@@ -142,5 +236,6 @@ export function SortableList<T>(props: SortableListProps<T>) {
             </div>
           )}
         </div>
+      </>
     )
 }
