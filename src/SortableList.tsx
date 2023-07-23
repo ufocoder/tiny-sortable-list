@@ -63,11 +63,9 @@ function useDragPreventAnimation(sourceIndex: number | null) {
     }, [sourceIndex])
 }
 
-function calculateInsertPosition(e: React.DragEvent<HTMLDivElement>, direction: Direction) : Position {
+function calculateInsertPosition(e: React.DragEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, direction: Direction) : Position {
     const { top, left, width, height } = e.currentTarget.getBoundingClientRect()
     const { clientY, clientX } = e?.touches[0] || {}
-
-    console.log('clientY, clientX', clientY, clientX)
 
     if (direction === 'vertical') {
         return clientY < top + height / 2 ? Position.before : Position.after
@@ -96,7 +94,7 @@ function calculationTargetIndex(position: Position, sourceIndex: number, index: 
     return index + 1
 }
 
-function getTargetIndex(e: TouchEvent): number | null {
+function getTargetIndex(e: React.TouchEvent<HTMLDivElement>): number | null {
   const { pageY, pageX } = e?.touches[0] || {}
 
   if (typeof pageY !== 'number') return null
@@ -112,7 +110,8 @@ export function SortableList<T>(props: SortableListProps<T>) {
     const [sourceIndex, setSourceIndex] = useState<number | null>(null)
     const [hoveredItem, setHoveredItem] = useState<number| null>(null)
     const [targetIndex, setTargetIndex] = useState<number | null>(null)
-    const [mouse, setMouse] = useState<[number, number]>([0, 0]);
+    const [pointer, setPointer] = useState<[number, number]>([0, 0]);
+    const [pointerType, setPointerType] = useState<string | null>(null);
 
     const { items, direction = 'vertical', className, style, onSort } = props
 
@@ -127,30 +126,31 @@ export function SortableList<T>(props: SortableListProps<T>) {
     }, []);
 
     useEffect(() => {
-      const handler = (e: MouseEvent) => {
-        setMouse([e.x, e.y]);
-      };
-  
-      document.addEventListener("mousemove", handler);
-  
-      return () => document.removeEventListener("mousemove", handler);
-    }, []);
-
-    useEffect(() => {
-      const handler = (e) => {
-        console.log('useEffect touchmove')
+      const handler = (e: React.TouchEvent<HTMLDivElement> | TouchEvent) => {
         const { clientX, clientY } = e?.touches[0] || {}
-        clientX && setMouse([clientX, clientY]);
+        clientX && setPointer([clientX, clientY]);
       };
   
-      document.addEventListener("touchmove", handler, {  });
+      document.addEventListener("touchmove", handler);
   
       return () => document.removeEventListener("touchmove", handler);
     }, []);
 
+    useEffect(() => {
+      const detectPointerType = (e: PointerEvent) => {
+        if (e.pointerType === pointerType) return;
+
+        setPointerType(e.pointerType)
+      }
+
+      document.addEventListener("pointerdown", detectPointerType);
+
+      return () => document.removeEventListener("pointerdown", detectPointerType);
+    })
+
     return (
       <>
-      {sourceIndex !== null && (console.log('sourceIndex', sourceIndex) || true) && (
+      {sourceIndex !== null && (pointerType !== 'mouse') && (
         <div
         data-index="index"
           className={className}
@@ -159,20 +159,8 @@ export function SortableList<T>(props: SortableListProps<T>) {
             position: "absolute",
             backgroundColor: "red",
             pointerEvents: "none",
-            left: `${mouse[0]}px`,
-            top: `${mouse[1]}px`
-          }}
-          onMouseUp={(e) => {
-            console.log('onMouseUp 000')
-            e.preventDefault()
-
-            if (sourceIndex !== null && targetIndex !== null) {
-              onSort(sourceIndex, targetIndex)
-            }
-
-            setTargetIndex(null)
-            setSourceIndex(null)
-            setHoveredItem(null)
+            left: `${pointer[0]}px`,
+            top: `${pointer[1]}px`
           }}
         >
           {props.children({
@@ -188,7 +176,7 @@ export function SortableList<T>(props: SortableListProps<T>) {
           {items.map((item, index) =>
             <div
               data-index={`${index}`}
-              draggable={false}
+              draggable={pointerType === 'mouse'}
               onClick={(e) => e.preventDefault() }
               key={index}
               onDragStart={() => setSourceIndex(index)}
@@ -216,11 +204,14 @@ export function SortableList<T>(props: SortableListProps<T>) {
                 setSourceIndex(null)
                 setHoveredItem(null)
               }}
-              // {...useLongPress(() => setSourceIndex(index), () => setSourceIndex(null))}
-              onMouseDown={(e) => { setSourceIndex(index); setHoveredItem(index)}}
-              onTouchStart={(e) => {  const { clientX, clientY } = e?.touches[0] || {}; setSourceIndex(index); setHoveredItem(index)}}
+              onTouchStart={(e) => {
+                const { clientX, clientY } = e?.touches[0] || {}
+
+                setPointer([clientX, clientY])
+                setSourceIndex(index)
+                setHoveredItem(index)
+              }}
               onTouchEnd={(e) => {
-                console.log('onMouseUp')
                 e.preventDefault()
 
                 if (sourceIndex !== null && targetIndex !== null) {
@@ -230,18 +221,6 @@ export function SortableList<T>(props: SortableListProps<T>) {
                 setTargetIndex(null)
                 setSourceIndex(null)
                 setHoveredItem(null)
-              }}
-              onMouseMove={(e) => {
-                e.preventDefault()
-
-                if (sourceIndex === null) {
-                  return
-                }
-
-                const position = calculateInsertPosition(e, direction)
-                const targetIndex = calculationTargetIndex(position, sourceIndex, index)
-
-                setTargetIndex(targetIndex)
               }}
               onTouchMove={(e) => {
                 e.preventDefault()
