@@ -5,7 +5,10 @@ const itemStyle = {
   padding: '20px 10px',
   background: '#fff',
   border: '2px solid',
-  borderColor: '#000'
+  borderTopColor: '#000',
+  borderLeftColor: '#000',
+  borderRightColor: '#000',
+  borderBottomColor: '#000'
 };
 
 interface Item {
@@ -18,10 +21,11 @@ function ItemHorizontalComponent(props: SortableItemProps<Item>) {
   return (
     <div
       style={{
+        ...itemStyle,
         opacity: isDragged ? '0.3' : undefined,
-        borderLeftColor: isDragItemInsertBefore ? 'yellow' : undefined,
-        borderRightColor: isDragItemInsertAfter ? 'yellow' : undefined,
-        ...itemStyle
+        borderLeftColor: isDragItemInsertBefore ? 'yellow' : '#000',
+        borderRightColor: isDragItemInsertAfter ? 'yellow' : '#000',
+        
       }}>
         {item.title}
     </div>
@@ -34,10 +38,10 @@ function ItemVerticalComponent(props: SortableItemProps<Item>) {
   return (
     <div
       style={{
+        ...itemStyle,
         opacity: isDragged ? '0.3' : undefined,
-        borderTopColor: isDragItemInsertBefore ? 'yellow' : undefined,
-        borderBottomColor: isDragItemInsertAfter ? 'yellow' : undefined,
-        ...itemStyle
+        borderTopColor: isDragItemInsertBefore ? 'yellow' : '#000',
+        borderBottomColor: isDragItemInsertAfter ? 'yellow' : '#000',
       }}>
         {item.title}
     </div>
@@ -53,13 +57,11 @@ const createPreset = () => [
 ]
 
 const createSortHandler = (setItems: Dispatch<SetStateAction<Item[]>>) => (sourceIndex: number, targetIndex: number) => {
-  console.log('sourceIndex',sourceIndex)
   if (sourceIndex === targetIndex) {
     return
   }
 
   setItems(originItems => {
-    console.log('setItems', originItems)
     const items = originItems.slice()
     const item = items[sourceIndex]
 
@@ -85,7 +87,7 @@ export const Vertical = () => {
 
   return (
     <SortableList style={verticalListStyle} items={items} onSort={sortHandler} direction='vertical'>
-      {props => <ItemVerticalComponent {...props} data-help="help"/>}
+      {props => <ItemVerticalComponent {...props} />}
     </SortableList>
   )
 };
@@ -105,7 +107,7 @@ export const Horizontal = () => {
 
   return (
     <SortableList style={horizontalListStyle} items={items} onSort={sortHandler} direction='horizontal'>
-      {props => <ItemHorizontalComponent {...props} data-help="help"/>}
+      {props => <ItemHorizontalComponent {...props} />}
     </SortableList>
   )
 };
