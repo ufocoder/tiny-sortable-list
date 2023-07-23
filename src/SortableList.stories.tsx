@@ -4,7 +4,8 @@ import { SortableList, SortableItemProps } from './SortableList'
 const itemStyle = {
   padding: '20px 10px',
   background: '#fff',
-  border: '2px solid #000'
+  border: '2px solid',
+  borderColor: '#000'
 };
 
 interface Item {
@@ -52,11 +53,13 @@ const createPreset = () => [
 ]
 
 const createSortHandler = (setItems: Dispatch<SetStateAction<Item[]>>) => (sourceIndex: number, targetIndex: number) => {
+  console.log('sourceIndex',sourceIndex)
   if (sourceIndex === targetIndex) {
     return
   }
 
   setItems(originItems => {
+    console.log('setItems', originItems)
     const items = originItems.slice()
     const item = items[sourceIndex]
 
@@ -78,11 +81,11 @@ const verticalListStyle: React.CSSProperties = {
 
 export const Vertical = () => {
   const [items, setItems] = useState<Item[]>(createPreset())
-  const sortHandler = useCallback(() => createSortHandler(setItems), [setItems])
+  const sortHandler = useCallback(createSortHandler(setItems), [])
 
   return (
     <SortableList style={verticalListStyle} items={items} onSort={sortHandler} direction='vertical'>
-      {props => <ItemVerticalComponent {...props} />}
+      {props => <ItemVerticalComponent {...props} data-help="help"/>}
     </SortableList>
   )
 };
@@ -98,11 +101,11 @@ const horizontalListStyle: React.CSSProperties = {
 
 export const Horizontal = () => {
   const [items, setItems] = useState<Item[]>(createPreset())
-  const sortHandler = useCallback(() => createSortHandler(setItems), [setItems])
+  const sortHandler = createSortHandler(setItems)
 
   return (
     <SortableList style={horizontalListStyle} items={items} onSort={sortHandler} direction='horizontal'>
-      {props => <ItemHorizontalComponent {...props} />}
+      {props => <ItemHorizontalComponent {...props} data-help="help"/>}
     </SortableList>
   )
 };

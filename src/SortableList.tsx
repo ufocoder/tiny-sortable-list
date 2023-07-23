@@ -65,12 +65,15 @@ function useDragPreventAnimation(sourceIndex: number | null) {
 
 function calculateInsertPosition(e: React.DragEvent<HTMLDivElement>, direction: Direction) : Position {
     const { top, left, width, height } = e.currentTarget.getBoundingClientRect()
+    const { clientY, clientX } = e?.touches[0] || {}
+
+    console.log('clientY, clientX', clientY, clientX)
 
     if (direction === 'vertical') {
-        return e.clientY < top + height / 2 ? Position.before : Position.after
+        return clientY < top + height / 2 ? Position.before : Position.after
     }
 
-    return e.clientX < left + width / 2 ? Position.before : Position.after
+    return clientX < left + width / 2 ? Position.before : Position.after
 }
 
 function calculationTargetIndex(position: Position, sourceIndex: number, index: number): number {
@@ -93,6 +96,18 @@ function calculationTargetIndex(position: Position, sourceIndex: number, index: 
     return index + 1
 }
 
+function getTargetIndex(e: TouchEvent): number | null {
+  const { pageY, pageX } = e?.touches[0] || {}
+
+  if (typeof pageY !== 'number') return null
+  
+  const targetElemContainer = document.elementFromPoint(pageX, pageY)?.parentElement
+
+  const targetIndex = Number(targetElemContainer?.getAttribute("data-index"))
+
+  return isNaN(targetIndex) ? null : targetIndex
+}
+
 export function SortableList<T>(props: SortableListProps<T>) {
     const [sourceIndex, setSourceIndex] = useState<number | null>(null)
     const [hoveredItem, setHoveredItem] = useState<number| null>(null)
@@ -113,19 +128,6 @@ export function SortableList<T>(props: SortableListProps<T>) {
 
     useEffect(() => {
       const handler = (e: MouseEvent) => {
-        if (sourceIndex !== null) {
-          e.preventDefault();
-          setSourceIndex(null);
-        }
-      };
-
-      document.addEventListener("mouseup", handler);
-
-      return () => document.removeEventListener("mouseup", handler);
-    }, []);
-
-    useEffect(() => {
-      const handler = (e: MouseEvent) => {
         setMouse([e.x, e.y]);
       };
   
@@ -134,15 +136,29 @@ export function SortableList<T>(props: SortableListProps<T>) {
       return () => document.removeEventListener("mousemove", handler);
     }, []);
 
+    useEffect(() => {
+      const handler = (e) => {
+        console.log('useEffect touchmove')
+        const { clientX, clientY } = e?.touches[0] || {}
+        clientX && setMouse([clientX, clientY]);
+      };
+  
+      document.addEventListener("touchmove", handler, {  });
+  
+      return () => document.removeEventListener("touchmove", handler);
+    }, []);
+
     return (
       <>
       {sourceIndex !== null && (console.log('sourceIndex', sourceIndex) || true) && (
         <div
+        data-index="index"
           className={className}
           style={{
             ...style,
             position: "absolute",
             backgroundColor: "red",
+            pointerEvents: "none",
             left: `${mouse[0]}px`,
             top: `${mouse[1]}px`
           }}
@@ -171,6 +187,7 @@ export function SortableList<T>(props: SortableListProps<T>) {
         <div className={className} style={style}>
           {items.map((item, index) =>
             <div
+              data-index={`${index}`}
               draggable={false}
               onClick={(e) => e.preventDefault() }
               key={index}
@@ -201,7 +218,8 @@ export function SortableList<T>(props: SortableListProps<T>) {
               }}
               // {...useLongPress(() => setSourceIndex(index), () => setSourceIndex(null))}
               onMouseDown={(e) => { setSourceIndex(index); setHoveredItem(index)}}
-              onMouseUp={(e) => {
+              onTouchStart={(e) => {  const { clientX, clientY } = e?.touches[0] || {}; setSourceIndex(index); setHoveredItem(index)}}
+              onTouchEnd={(e) => {
                 console.log('onMouseUp')
                 e.preventDefault()
 
@@ -225,13 +243,24 @@ export function SortableList<T>(props: SortableListProps<T>) {
 
                 setTargetIndex(targetIndex)
               }}
+              onTouchMove={(e) => {
+                e.preventDefault()
+
+                if (sourceIndex === null) {
+                  return
+                }
+
+                const targetIndex = Number(getTargetIndex(e))
+
+                setTargetIndex(targetIndex)
+              }}
             >
               {props.children({
                 item,
                 isDragItemInsertBefore: shouldInsertBefore(sourceIndex, targetIndex, index),
                 isDragItemInsertAfter: shouldInsertAfter(sourceIndex, targetIndex, index),
                 isDragged: sourceIndex === index,
-                isHovered: hoveredItem === index
+                isHovered: hoveredItem === index,
               }, index)}
             </div>
           )}
