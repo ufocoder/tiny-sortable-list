@@ -35,5 +35,5 @@ function App() {
 
 ## Contributors
 
-- [Sergey Ufocoder](https://github.com/ufocoder/)
+- [Sergey Ufocoder](https://github.com/ufocoder/) 
 — [Tim Khazamov](https://github.com/nanot1m/)
