@@ -22,10 +22,17 @@
   },
   "devDependencies": {
     "@babel/core": "^7.22.11",
-    "@storybook/addon-actions": "^7.3.2",
+    "@babel/preset-env": "^7.22.10",
+    "@babel/preset-react": "^7.22.5",
+    "@babel/preset-typescript": "^7.22.11",
     "@storybook/addon-essentials": "^7.3.2",
+    "@storybook/addon-interactions": "^7.3.2",
     "@storybook/addon-links": "^7.3.2",
+    "@storybook/addon-onboarding": "^1.0.8",
+    "@storybook/blocks": "^7.3.2",
     "@storybook/react": "^7.3.2",
+    "@storybook/react-webpack5": "^7.3.2",
+    "@storybook/testing-library": "^0.2.0",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "babel-loader": "^9.1.3",
@@ -33,6 +40,7 @@
     "react-dom": "^18.2.0",
     "rollup": "^3.28.1",
     "rollup-plugin-typescript2": "^0.35.0",
+    "storybook": "^7.3.2",
     "typescript": "^5.2.2"
   },
   "peerDependencies": {
@@ -42,8 +50,8 @@
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -c -w",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "files": [
     "dist"
