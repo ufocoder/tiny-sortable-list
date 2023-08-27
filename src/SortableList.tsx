@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, SyntheticEvent } from 'react'
 
 enum Position {
   before = 0,
@@ -118,45 +118,54 @@ export function SortableList<T>(props: SortableListProps<T>) {
 
     return (
         <div className={className} style={style}>
-          {items.map((item, index) =>
-            <div
-              draggable
-              key={index}
-              onDragStart={() => setSourceIndex(index)}
-              onDragEnter={() => setHoveredItem(index)}
-              onDragOver={(e) => {
-                e.preventDefault()
+          {items.map((item, index) => {
 
-                if (sourceIndex === null) {
-                  return
-                }
+            const handleStart = () => setSourceIndex(index)
+            const handleEnter = () => setHoveredItem(index)
+            const handleOver = (e: React.DragEvent<HTMLDivElement>) => {
+              e.preventDefault()
 
-                const position = calculateInsertPosition(e, direction)
-                const targetIndex = calculationTargetIndex(position, sourceIndex, index)
+              if (sourceIndex === null) {
+                return
+              }
 
-                setTargetIndex(targetIndex)
-              }}
-              onDragEnd={(e) => {
-                e.preventDefault()
+              const position = calculateInsertPosition(e, direction)
+              const targetIndex = calculationTargetIndex(position, sourceIndex, index)
 
-                if (sourceIndex !== null && targetIndex !== null) {
-                  sortHandler(sourceIndex, targetIndex)
-                }
+              setTargetIndex(targetIndex)
+            }
 
-                setTargetIndex(null)
-                setSourceIndex(null)
-                setHoveredItem(null)
-              }}
-            >
-              {props.children({
-                item,
-                isDragItemInsertBefore: shouldInsertBefore(sourceIndex, targetIndex, index),
-                isDragItemInsertAfter: shouldInsertAfter(sourceIndex, targetIndex, index),
-                isDragged: sourceIndex === index,
-                isHovered: hoveredItem === index
-              }, index)}
-            </div>
-          )}
+            const handleEnd = (e: SyntheticEvent) => {
+              e.preventDefault()
+
+              if (sourceIndex !== null && targetIndex !== null) {
+                sortHandler(sourceIndex, targetIndex)
+              }
+
+              setTargetIndex(null)
+              setSourceIndex(null)
+              setHoveredItem(null)
+            }
+
+            return (
+              <div
+                draggable
+                key={index}
+                onDragStart={handleStart}
+                onDragEnter={handleEnter}
+                onDragOver={handleOver}
+                onDragEnd={handleEnd}
+              >
+                {props.children({
+                  item,
+                  isDragItemInsertBefore: shouldInsertBefore(sourceIndex, targetIndex, index),
+                  isDragItemInsertAfter: shouldInsertAfter(sourceIndex, targetIndex, index),
+                  isDragged: sourceIndex === index,
+                  isHovered: hoveredItem === index
+                }, index)}
+              </div>
+            );
+        })}
         </div>
     )
 }
