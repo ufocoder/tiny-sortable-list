@@ -1,11 +1,11 @@
 {
-  "name": "@light-slides/sortable-list",
+  "name": "react-sortable-list",
   "version": "0.1.0",
   "description": "React sortable list",
-  "homepage": "https://github.com/light-slides/sortable-list",
+  "homepage": "https://github.com/ufocoder/sortable-list",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/light-slides/sortable-list.git"
+    "url": "git+ssh://git@github.com/ufocoder/sortable-list.git"
   },
   "license": "MIT",
   "source": "src/index.tsx",
