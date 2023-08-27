@@ -7,6 +7,11 @@
     "type": "git",
     "url": "git+ssh://git@github.com/ufocoder/tiny-sortable-list.git"
   },
+  "keywords": [
+    "react",
+    "sortable",
+    "list"
+  ],
   "license": "MIT",
   "source": "src/index.tsx",
   "main": "dist/index.cjs.js",
