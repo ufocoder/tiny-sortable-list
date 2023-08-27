@@ -1,11 +1,11 @@
 {
   "name": "react-sortable-list",
   "version": "0.1.0",
-  "description": "React sortable list",
-  "homepage": "https://github.com/ufocoder/sortable-list",
+  "description": "React tiny sortable list",
+  "homepage": "https://github.com/ufocoder/tiny-sortable-list",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/ufocoder/sortable-list.git"
+    "url": "git+ssh://git@github.com/ufocoder/tiny-sortable-list.git"
   },
   "license": "MIT",
   "source": "src/index.tsx",
