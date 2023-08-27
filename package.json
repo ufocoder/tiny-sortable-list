@@ -50,8 +50,8 @@
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -c -w",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "storybook:watch": "storybook dev -p 6006",
+    "storybook:build": "storybook build"
   },
   "files": [
     "dist"
