@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 
 enum Position {
   before = 0,
@@ -17,11 +17,11 @@ export interface SortableItemProps<T> {
 
 export interface SortableListProps<T> {
   items: T[]
+  setItems: (items: T[]) => void
   direction?: Direction
   className?: string
   style?: React.CSSProperties
   children: (props: SortableItemProps<T>, index: number) => React.ReactElement
-  onSort: (sourceIndex: number, targetIndex: number) => void
 }
 
 const shouldInsertBefore = (sourceIndex: number | null, targetIndex: number | null, index: number) => {
@@ -96,7 +96,23 @@ export function SortableList<T>(props: SortableListProps<T>) {
     const [hoveredItem, setHoveredItem] = useState<number| null>(null)
     const [targetIndex, setTargetIndex] = useState<number | null>(null)
 
-    const { items, direction = 'vertical', className, style, onSort } = props
+    const { items, setItems, direction = 'vertical', className, style } = props
+
+    const sortHandler = useCallback((sourceIndex: number, targetIndex: number) => {
+      if (sourceIndex === targetIndex) {
+        return
+      }
+  
+      setItems(originItems => {
+        const items = originItems.slice()
+        const item = items[sourceIndex]
+  
+        items.splice(sourceIndex, 1)
+        items.splice(targetIndex, 0 ,item)
+  
+        return items
+      })
+    }, [setItems])
 
     useDragPreventAnimation(sourceIndex)
 
@@ -124,7 +140,7 @@ export function SortableList<T>(props: SortableListProps<T>) {
                 e.preventDefault()
 
                 if (sourceIndex !== null && targetIndex !== null) {
-                  onSort(sourceIndex, targetIndex)
+                  sortHandler(sourceIndex, targetIndex)
                 }
 
                 setTargetIndex(null)
