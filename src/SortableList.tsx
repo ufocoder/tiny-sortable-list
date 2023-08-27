@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, SyntheticEvent } from 'react'
+import React, { useState, useEffect, useCallback, SyntheticEvent, cloneElement } from 'react'
 
 enum Position {
   before = 0,
@@ -61,7 +61,7 @@ function useDragPreventAnimation(sourceIndex: number | null) {
     }, [sourceIndex])
 }
 
-function calculateInsertPosition(e: React.DragEvent<HTMLDivElement>, direction: Direction) : Position {
+function calculateInsertPosition(e: React.PointerEvent<HTMLDivElement>, direction: Direction) : Position {
     const { top, left, width, height } = e.currentTarget.getBoundingClientRect()
 
     if (direction === 'vertical') {
@@ -93,7 +93,7 @@ function calculationTargetIndex(position: Position, sourceIndex: number, index: 
 
 export function SortableList<T>(props: SortableListProps<T>) {
     const [sourceIndex, setSourceIndex] = useState<number | null>(null)
-    const [hoveredItem, setHoveredItem] = useState<number| null>(null)
+    const [hoveredIndex, setHoveredIndex] = useState<number| null>(null)
     const [targetIndex, setTargetIndex] = useState<number | null>(null)
 
     const { items, setItems, direction = 'vertical', className, style } = props
@@ -116,16 +116,40 @@ export function SortableList<T>(props: SortableListProps<T>) {
 
     useDragPreventAnimation(sourceIndex)
 
+
+    useEffect(() => {
+      const handlePointerUp = (e: any) => {
+        e.preventDefault()
+
+        if (sourceIndex !== null && targetIndex !== null) {
+          sortHandler(sourceIndex, targetIndex)
+        }
+
+        setTargetIndex(null)
+        setSourceIndex(null)
+        setHoveredIndex(null)
+      }
+
+      document.addEventListener('pointerup', handlePointerUp);
+
+      return () => {
+        document.removeEventListener('pointerup', handlePointerUp);
+      };
+    })
+
+
     return (
         <div className={className} style={style}>
           {items.map((item, index) => {
 
-            const handleStart = () => setSourceIndex(index)
-            const handleEnter = () => setHoveredItem(index)
-            const handleOver = (e: React.DragEvent<HTMLDivElement>) => {
+            const handlePointerDown = () => setSourceIndex(index)
+            const handlePointerEnter = () => setHoveredIndex(index)
+
+            const handlePointerOver = (e: React.PointerEvent<HTMLDivElement>) => {
               e.preventDefault()
 
               if (sourceIndex === null) {
+                setHoveredIndex(index);
                 return
               }
 
@@ -134,38 +158,24 @@ export function SortableList<T>(props: SortableListProps<T>) {
 
               setTargetIndex(targetIndex)
             }
-
-            const handleEnd = (e: SyntheticEvent) => {
-              e.preventDefault()
-
-              if (sourceIndex !== null && targetIndex !== null) {
-                sortHandler(sourceIndex, targetIndex)
-              }
-
-              setTargetIndex(null)
-              setSourceIndex(null)
-              setHoveredItem(null)
-            }
-
+            
             return (
               <div
-                draggable
                 key={index}
-                onDragStart={handleStart}
-                onDragEnter={handleEnter}
-                onDragOver={handleOver}
-                onDragEnd={handleEnd}
+                onPointerDown={handlePointerDown}
+                onPointerEnter={handlePointerEnter}
+                onPointerOver={handlePointerOver}
               >
                 {props.children({
                   item,
                   isDragItemInsertBefore: shouldInsertBefore(sourceIndex, targetIndex, index),
                   isDragItemInsertAfter: shouldInsertAfter(sourceIndex, targetIndex, index),
                   isDragged: sourceIndex === index,
-                  isHovered: hoveredItem === index
+                  isHovered: hoveredIndex === index
                 }, index)}
               </div>
             );
         })}
-        </div>
+      </div>
     )
 }
