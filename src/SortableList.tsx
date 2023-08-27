@@ -17,7 +17,7 @@ export interface SortableItemProps<T> {
 
 export interface SortableListProps<T> {
   items: T[]
-  setItems: (items: T[]) => void
+  setItems: React.Dispatch<React.SetStateAction<T[]>>
   direction?: Direction
   className?: string
   style?: React.CSSProperties
