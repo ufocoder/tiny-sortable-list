@@ -8,6 +8,7 @@ React component for sortable list based on HTML [Drag and Drop API](https://deve
 
 ## Features
 
+- No dependencies
 - Horizonal and vertical lists
 
 ## Usage
