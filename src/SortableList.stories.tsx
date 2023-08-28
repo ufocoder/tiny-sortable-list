@@ -4,7 +4,11 @@ import { SortableList, type SortableItemProps } from './SortableList'
 const itemStyle = {
   padding: '20px 10px',
   background: '#fff',
-  border: '2px solid #000'
+  border: '2px solid',
+  borderTopColor: '#000',
+  borderLeftColor: '#000',
+  borderRightColor: '#000',
+  borderBottomColor: '#000'
 }
 
 interface Item {
@@ -17,10 +21,10 @@ function ItemHorizontalComponent (props: SortableItemProps<Item>): React.ReactEl
   return (
     <div
       style={{
+        ...itemStyle,
         opacity: isDragged ? '0.3' : undefined,
-        borderLeftColor: isDragItemInsertBefore ? 'yellow' : undefined,
-        borderRightColor: isDragItemInsertAfter ? 'yellow' : undefined,
-        ...itemStyle
+        borderLeftColor: isDragItemInsertBefore ? 'yellow' : '#000',
+        borderRightColor: isDragItemInsertAfter ? 'yellow' : '#000',
       }}>
         {item.title}
     </div>
@@ -33,10 +37,10 @@ function ItemVerticalComponent (props: SortableItemProps<Item>): React.ReactElem
   return (
     <div
       style={{
+        ...itemStyle,
         opacity: isDragged ? '0.3' : undefined,
-        borderTopColor: isDragItemInsertBefore ? 'yellow' : undefined,
-        borderBottomColor: isDragItemInsertAfter ? 'yellow' : undefined,
-        ...itemStyle
+        borderTopColor: isDragItemInsertBefore ? 'yellow' : '#000',
+        borderBottomColor: isDragItemInsertAfter ? 'yellow' : '#000'
       }}>
         {item.title}
     </div>
