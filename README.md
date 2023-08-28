@@ -13,9 +13,36 @@ React component for sortable list based on HTML [Drag and Drop API](https://deve
 
 ## Usage
 
+Minimal working example
+
 ```typescript
+import { useState } from 'react'
+import { SortableList, SortableItemProps } from 'tiny-sortable-list'
+
 interface Item {
   title: string
+}
+
+const itemStyle = {
+  padding: '20px 10px',
+  background: 'white',
+  border: '2px black solid'
+};
+
+function ItemVerticalComponent(props: SortableItemProps<Item>) {
+  const { item, isDragged, isDragItemInsertAfter, isDragItemInsertBefore } = props
+
+  return (
+    <div
+      style={{
+        ...itemStyle,
+        opacity: isDragged ? '0.3' : undefined,
+        borderTopColor: isDragItemInsertBefore ? 'yellow' : 'black',
+        borderBottomColor: isDragItemInsertAfter ? 'yellow' : 'black',
+      }}>
+        {item.title}
+    </div>
+  )
 }
 
 function App() {
