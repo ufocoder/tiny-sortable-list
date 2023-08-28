@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
-import { SortableList, SortableItemProps } from './SortableList'
+import { SortableList, type SortableItemProps } from './SortableList'
 
 const itemStyle = {
   padding: '20px 10px',
   background: '#fff',
   border: '2px solid #000'
-};
+}
 
 interface Item {
   title: string
 }
 
-function ItemHorizontalComponent(props: SortableItemProps<Item>) {
+function ItemHorizontalComponent (props: SortableItemProps<Item>): React.ReactElement {
   const { item, isDragged, isDragItemInsertAfter, isDragItemInsertBefore } = props
 
   return (
@@ -27,7 +27,7 @@ function ItemHorizontalComponent(props: SortableItemProps<Item>) {
   )
 }
 
-function ItemVerticalComponent(props: SortableItemProps<Item>) {
+function ItemVerticalComponent (props: SortableItemProps<Item>): React.ReactElement {
   const { item, isDragged, isDragItemInsertAfter, isDragItemInsertBefore } = props
 
   return (
@@ -43,12 +43,12 @@ function ItemVerticalComponent(props: SortableItemProps<Item>) {
   )
 }
 
-const createPreset = () => [
-  { title: 'item #1'},
-  { title: 'item #2'},
-  { title: 'item #3'},
-  { title: 'item #4'},
-  { title: 'item #5'},
+const createPreset = (): Item[] => [
+  { title: 'item #1' },
+  { title: 'item #2' },
+  { title: 'item #3' },
+  { title: 'item #4' },
+  { title: 'item #5' }
 ]
 
 const verticalListStyle: React.CSSProperties = {
@@ -58,9 +58,9 @@ const verticalListStyle: React.CSSProperties = {
   gap: '4px',
   width: '400px',
   flexDirection: 'column'
-};
+}
 
-export const Vertical = () => {
+export const Vertical = (): React.ReactElement => {
   const [items, setItems] = useState<Item[]>(createPreset())
 
   return (
@@ -68,7 +68,7 @@ export const Vertical = () => {
       {props => <ItemVerticalComponent {...props} />}
     </SortableList>
   )
-};
+}
 
 const horizontalListStyle: React.CSSProperties = {
   background: '#ccc',
@@ -77,19 +77,19 @@ const horizontalListStyle: React.CSSProperties = {
   gap: '4px',
   width: '400px',
   flexDirection: 'row'
-};
+}
 
-export const Horizontal = () => {
-  const [items, setItems] = useState<Item[]>(createPreset());
+export const Horizontal = (): React.ReactElement => {
+  const [items, setItems] = useState<Item[]>(createPreset())
 
   return (
     <SortableList style={horizontalListStyle} items={items} setItems={setItems} direction='horizontal'>
       {props => <ItemHorizontalComponent {...props} />}
     </SortableList>
   )
-};
+}
 
 export default {
-  title: "SortableList",
+  title: 'SortableList',
   component: SortableList
-};
+}

@@ -3,17 +3,46 @@ Tiny sortable list
 
 ![Build](https://github.com/ufocoder/tiny-sortable-list/actions/workflows/build.yml/badge.svg)
 
-Example of sortable list on React based on HTML [Drag and Drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API)
+React component for sortable list based on HTML [Drag and Drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API)
+
 
 ## Features
 
+- No dependencies
 - Horizonal and vertical lists
 
 ## Usage
 
+Minimal working example
+
 ```typescript
+import { useState } from 'react'
+import { SortableList, SortableItemProps } from 'tiny-sortable-list'
+
 interface Item {
   title: string
+}
+
+const itemStyle = {
+  padding: '20px 10px',
+  background: 'white',
+  border: '2px black solid'
+};
+
+function ItemVerticalComponent(props: SortableItemProps<Item>) {
+  const { item, isDragged, isDragItemInsertAfter, isDragItemInsertBefore } = props
+
+  return (
+    <div
+      style={{
+        ...itemStyle,
+        opacity: isDragged ? '0.3' : undefined,
+        borderTopColor: isDragItemInsertBefore ? 'yellow' : 'black',
+        borderBottomColor: isDragItemInsertAfter ? 'yellow' : 'black',
+      }}>
+        {item.title}
+    </div>
+  )
 }
 
 function App() {
