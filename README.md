@@ -3,7 +3,7 @@ Tiny sortable list
 
 ![Build](https://github.com/ufocoder/tiny-sortable-list/actions/workflows/build.yml/badge.svg)
 
-Tiny React component for sortable list based on HTML [Drag and Drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API)
+React component for sortable list based on HTML [Drag and Drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API)
 
 
 ## Features
