@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, SyntheticEvent } from 'react'
+import React, { useState, useEffect, useCallback, type SyntheticEvent } from 'react'
 import './pollyfill'
 
 enum Position {
@@ -119,56 +119,55 @@ export function SortableList<T> (props: SortableListProps<T>): React.ReactElemen
 
   useDragPreventAnimation(sourceIndex)
 
-    return (
-        <div className={className} style={style}>
-          {items.map((item, index) => {
+  return (
+    <div className={className} style={style}>
+      {items.map((item, index): JSX.Element => {
+        const handleStart = () => setSourceIndex(index)
+        const handleEnter = () => setHoveredItem(index)
+        const handleOver = (e: React.DragEvent<HTMLDivElement>) => {
+          e.preventDefault()
 
-            const handleStart = () => setSourceIndex(index)
-            const handleEnter = () => setHoveredItem(index)
-            const handleOver = (e: React.DragEvent<HTMLDivElement>) => {
-              e.preventDefault()
+          if (sourceIndex === null) {
+            return
+          }
 
-              if (sourceIndex === null) {
-                return
-              }
+          const position = calculateInsertPosition(e, direction)
+          const targetIndex = calculationTargetIndex(position, sourceIndex, index)
 
-              const position = calculateInsertPosition(e, direction)
-              const targetIndex = calculationTargetIndex(position, sourceIndex, index)
+          setTargetIndex(targetIndex)
+        }
 
-              setTargetIndex(targetIndex)
-            }
+        const handleEnd = (e: SyntheticEvent) => {
+          e.preventDefault()
 
-            const handleEnd = (e: SyntheticEvent) => {
-              e.preventDefault()
+          if (sourceIndex !== null && targetIndex !== null) {
+            sortHandler(sourceIndex, targetIndex)
+          }
 
-              if (sourceIndex !== null && targetIndex !== null) {
-                sortHandler(sourceIndex, targetIndex)
-              }
+          setTargetIndex(null)
+          setSourceIndex(null)
+          setHoveredItem(null)
+        }
 
-              setTargetIndex(null)
-              setSourceIndex(null)
-              setHoveredItem(null)
-            }
-
-            return (
-              <div
-                draggable
-                key={index}
-                onDragStart={handleStart}
-                onDragEnter={handleEnter}
-                onDragOver={handleOver}
-                onDragEnd={handleEnd}
-              >
-                {props.children({
-                  item,
-                  isDragItemInsertBefore: shouldInsertBefore(sourceIndex, targetIndex, index),
-                  isDragItemInsertAfter: shouldInsertAfter(sourceIndex, targetIndex, index),
-                  isDragged: sourceIndex === index,
-                  isHovered: hoveredItem === index
-                }, index)}
-              </div>
-            );
-        })}
+        return (
+          <div
+            draggable
+            key={index}
+            onDragStart={handleStart}
+            onDragEnter={handleEnter}
+            onDragOver={handleOver}
+            onDragEnd={handleEnd}
+          >
+            {props.children({
+              item,
+              isDragItemInsertBefore: shouldInsertBefore(sourceIndex, targetIndex, index),
+              isDragItemInsertAfter: shouldInsertAfter(sourceIndex, targetIndex, index),
+              isDragged: sourceIndex === index,
+              isHovered: hoveredItem === index
+            }, index)}
+          </div>
+        )
+      })};
     </div>
   )
 }

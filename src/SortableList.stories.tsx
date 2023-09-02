@@ -24,7 +24,7 @@ function ItemHorizontalComponent (props: SortableItemProps<Item>): React.ReactEl
         ...itemStyle,
         opacity: isDragged ? '0.3' : undefined,
         borderLeftColor: isDragItemInsertBefore ? 'yellow' : '#000',
-        borderRightColor: isDragItemInsertAfter ? 'yellow' : '#000',
+        borderRightColor: isDragItemInsertAfter ? 'yellow' : '#000'
       }}>
         {item.title}
     </div>

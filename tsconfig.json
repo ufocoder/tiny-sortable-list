@@ -10,7 +10,8 @@
     "resolveJsonModule": true,
     "moduleResolution": "node",
     "module": "esnext",
-    "strict": true
+    "strict": true,
+    "outDir": "dist"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "build", "src/**/*.test.tsx"]
