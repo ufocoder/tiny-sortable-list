@@ -9,6 +9,7 @@ React component for sortable list based on HTML [Drag and Drop API](https://deve
 ## Features
 
 - No dependencies
+- Mobile touch support
 - Horizonal and vertical lists
 
 ## Usage
@@ -66,7 +67,6 @@ function App() {
 
 ![demo](./demo.gif)
 
-## Contributors
+## Note
 
-- [Sergey Ufocoder](https://github.com/ufocoder/) 
-- [Tim Khazamov](https://github.com/nanot1m/)
+Component use [dragdroptouch](https://github.com/Bernardo-Castilho/dragdroptouch) pollyfill source under the hood
