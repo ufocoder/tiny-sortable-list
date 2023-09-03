@@ -1,6 +1,4 @@
-import type { StorybookConfig } from "@storybook/react-webpack5";
-
-const config: StorybookConfig = {
+const config = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: [
     "@storybook/addon-links",
@@ -8,12 +6,13 @@ const config: StorybookConfig = {
     "@storybook/addon-onboarding",
     "@storybook/addon-interactions",
   ],
-  framework: {
-    name: "@storybook/react-webpack5",
-    options: {},
-  },
   docs: {
     autodocs: true,
   },
+  framework: {
+    name: "@storybook/react-vite",
+    options: {}
+  }
 };
+
 export default config;
