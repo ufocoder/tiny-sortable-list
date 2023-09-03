@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, SyntheticEvent } from 'react'
+import './pollyfill'
 
 enum Position {
   before = 0,
