@@ -18,7 +18,7 @@
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "engines": {
-    "node": ">17"
+    "node": ">=18"
   },
   "devDependencies": {
     "@babel/core": "^7.22.11",
