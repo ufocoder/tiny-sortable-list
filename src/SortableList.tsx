@@ -122,8 +122,8 @@ export function SortableList<T> (props: SortableListProps<T>): React.ReactElemen
   return (
     <div className={className} style={style}>
       {items.map((item, index): JSX.Element => {
-        const handleStart = () => setSourceIndex(index)
-        const handleEnter = () => setHoveredItem(index)
+        const handleStart = () => { setSourceIndex(index) }
+        const handleEnter = () => { setHoveredItem(index) }
         const handleOver = (e: React.DragEvent<HTMLDivElement>) => {
           e.preventDefault()
 
