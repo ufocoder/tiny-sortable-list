@@ -9,6 +9,7 @@ module.exports = {
     "plugin:react/recommended",
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
+
   ],
   overrides: [
     {
@@ -24,6 +25,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: "latest",
     sourceType: "module",
+    project: "./tsconfig.json"
   },
   plugins: ["react"],
   settings: {
@@ -31,5 +33,9 @@ module.exports = {
       version: "detect",
     },
   },
-  rules: {},
+  rules: {
+    "@typescript-eslint/no-confusing-void-expression": "warn",
+    "@typescript-eslint/explicit-function-return-type": "warn"
+  },
+  ignorePatterns: ["**/*.js"]
 };

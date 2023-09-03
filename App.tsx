@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
-import { SortableList, type SortableItemProps } from './SortableList'
-
+import React, { useState } from 'react';
+import { type SortableItemProps, SortableList } from './src/SortableList';
 const itemStyle = {
   padding: '20px 10px',
   background: '#fff',
@@ -83,17 +82,23 @@ const horizontalListStyle: React.CSSProperties = {
   flexDirection: 'row'
 }
 
-export const Horizontal = (): React.ReactElement => {
-  const [items, setItems] = useState<Item[]>(createPreset())
+const App = (): React.ReactElement => {
+  const [vItems, setVitems] = useState(createPreset())
+  const [hItems, setHitems] = useState(createPreset())
 
   return (
-    <SortableList style={horizontalListStyle} items={items} setItems={setItems} direction='horizontal'>
-      {props => <ItemHorizontalComponent {...props} />}
-    </SortableList>
+    <>
+      <h1>Example</h1>
+      <h2>Vertical</h2>
+      <SortableList style={verticalListStyle} items={vItems} setItems={setVitems} direction='vertical'>
+        {props => <ItemVerticalComponent {...props} />}
+      </SortableList>
+      <h2>Horizontal</h2>
+      <SortableList style={horizontalListStyle} items={hItems} setItems={setHitems} direction='horizontal'>
+        {props => <ItemHorizontalComponent {...props} />}
+      </SortableList>
+    </>
   )
 }
 
-export default {
-  title: 'SortableList',
-  component: SortableList
-}
+export default App
