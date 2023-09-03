@@ -3,15 +3,7 @@ import dts from "vite-plugin-dts";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import packageJson from './package.json';
-import pkg from "./package.json" assert { type: "json" };;
-
-// get all of our externals since to exclude from our bundle, they will be installed by the user
-const external = [
-  ...Object.keys({
-    ...(packageJson.devDependencies || {}),
-  }),
-  'prop-types',
-];
+import pkg from "./package.json" assert { type: "json" };
 
 export default defineConfig({
   plugins: [
