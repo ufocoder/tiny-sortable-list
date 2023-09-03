@@ -15,7 +15,7 @@
   "license": "MIT",
   "source": "src/index.tsx",
   "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
+  "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "engines": {
     "node": ">=18"

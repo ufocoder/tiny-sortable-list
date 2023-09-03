@@ -8,7 +8,6 @@ import pkg from "./package.json" assert { type: "json" };
 export default defineConfig({
   plugins: [
     react(),
-    // generation of `index.d.ts`
     dts({
       insertTypesEntry: true,
     }),
@@ -22,20 +21,14 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "src/index.tsx"),
       name: packageJson.name,
-      formats: ["es", "umd"],
-      fileName: (format) => `${packageJson.name}.${format}.js`,
+      formats: ["es", "cjs"],
+      fileName: (format) => `index.${format}.js`,
     },
     rollupOptions: {
-      // make sure to externalize deps that shouldn't be bundled
-      // into your library
       external: Object.keys(pkg.peerDependencies || {}),
       output: {
-        // Provide global variables to use in the UMD build
-        // for externalized deps
         globals: {
           react: 'React',
-          'styled-components': "styled",
-          'prop-types': "PropTypes"
         },
       },
     }
