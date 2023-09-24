@@ -56,10 +56,7 @@
     "react-dom": "^18.2.0"
   },
   "scripts": {
-    "start": "vite",
-    "dev": "vite",
     "build": "npm run lint && vite build",
-    "serve": "vite preview",
     "lint": "eslint ./src --ext .ts,.tsx",
     "storybook:watch": "storybook dev -p 6006",
     "storybook:build": "storybook build"
