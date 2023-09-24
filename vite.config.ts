@@ -7,7 +7,9 @@ import pkg from "./package.json" assert { type: "json" };
 
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      jsxRuntime: 'classic',
+    }),
     dts({
       insertTypesEntry: true,
     }),
@@ -26,11 +28,6 @@ export default defineConfig({
     },
     rollupOptions: {
       external: Object.keys(pkg.peerDependencies || {}),
-      output: {
-        globals: {
-          react: 'React',
-        },
-      },
     }
   },
 });
