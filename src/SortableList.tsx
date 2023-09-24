@@ -122,9 +122,9 @@ export function SortableList<T> (props: SortableListProps<T>): React.ReactElemen
   return (
     <div className={className} style={style}>
       {items.map((item, index): JSX.Element => {
-        const handleStart = () => { setSourceIndex(index) }
-        const handleEnter = () => { setHoveredItem(index) }
-        const handleOver = (e: React.DragEvent<HTMLDivElement>) => {
+        const handleStart = (): void => { setSourceIndex(index) }
+        const handleEnter = (): void => { setHoveredItem(index) }
+        const handleOver = (e: React.DragEvent<HTMLDivElement>): void => {
           e.preventDefault()
 
           if (sourceIndex === null) {
@@ -137,7 +137,7 @@ export function SortableList<T> (props: SortableListProps<T>): React.ReactElemen
           setTargetIndex(targetIndex)
         }
 
-        const handleEnd = (e: SyntheticEvent) => {
+        const handleEnd = (e: SyntheticEvent): void => {
           e.preventDefault()
 
           if (sourceIndex !== null && targetIndex !== null) {
